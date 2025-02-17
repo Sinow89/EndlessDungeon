@@ -15,10 +15,27 @@ typedef enum GameScreen{
     ENDING
 } GameScreen;
 
+typedef enum Controls{
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+    OPEN
+} Controls;
+
+
+int key_bindings[5];
+
 int main(){
 
     const int screen_width = 800;
     const int screen_height = 600;
+
+    key_bindings[UP] = KEY_W;
+    key_bindings[DOWN] = KEY_S;
+    key_bindings[LEFT] = KEY_A;
+    key_bindings[RIGHT] = KEY_D;
+    key_bindings[OPEN] = KEY_E;
 
     GameScreen current_screen = LOGO;
 
@@ -83,6 +100,25 @@ int main(){
         /*-------------------------------------------------------*/
 
 
+        if(IsKeyDown(UP)) {
+
+        }
+
+        if(IsKeyDown(DOWN)) {
+
+        }
+
+        if(IsKeyDown(LEFT)) {
+
+        }
+
+        if(IsKeyDown(RIGHT)) {
+
+        }
+
+        if(IsKeyDown(OPEN)) {
+
+        }
 
         /*-------------------------------------------------------*/
         /*----------------------Drawing--------------------------*/
