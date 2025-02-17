@@ -5,6 +5,9 @@
 #include "raylib.h"
 #include "raymath.h"
 
+
+// Created 2025-02-17 by Christoffer Rozenbachs
+
 typedef enum GameScreen{ 
     LOGO,
     TITLE,
@@ -52,7 +55,7 @@ int main(){
                 // TODO: Update GAMEPLAY screen variables here!
 
                 // Press enter to change to ENDING screen
-                if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
+                if (IsKeyPressed(KEY_Q))
                 {
                     current_screen = ENDING;
                 }
@@ -68,6 +71,22 @@ int main(){
             } break;
             default: break;
         }
+
+        /*-------------------------------------------------------*/
+        /*----------------------Game-logic-----------------------*/
+        /*-------------------------------------------------------*/
+
+
+
+        /*-------------------------------------------------------*/
+        /*----------------------Controls-------------------------*/
+        /*-------------------------------------------------------*/
+
+
+
+        /*-------------------------------------------------------*/
+        /*----------------------Drawing--------------------------*/
+        /*-------------------------------------------------------*/
 
         BeginDrawing();
 
@@ -95,7 +114,7 @@ int main(){
                     // TODO: Draw GAMEPLAY screen here!
                     DrawRectangle(0, 0, screen_width, screen_height, PURPLE);
                     DrawText("GAMEPLAY SCREEN", 20, 20, 40, MAROON);
-                    DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 130, 220, 20, MAROON);
+                    DrawText("PRESS Q to ENDING SCREEN", 130, 220, 20, MAROON);
 
                 } break;
                 case ENDING:
