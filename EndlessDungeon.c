@@ -5,10 +5,22 @@
 #include "raylib.h"
 #include "raymath.h"
 
+typedef enum GameScreen{ 
+    LOGO,
+    TITLE,
+    GAMEPLAY,
+    ENDING
+} GameScreen;
+
 int main(){
 
+    const int screen_width = 800;
+    const int screen_height = 600;
+
+    GameScreen current_screen = LOGO;
+
     SetTargetFPS(60);
-    InitWindow(800, 600, "Endless Dungeon");
+    InitWindow(screen_width, screen_height, "Endless Dungeon");
 
     while(!WindowShouldClose()){
 
