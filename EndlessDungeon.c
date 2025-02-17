@@ -57,6 +57,13 @@ typedef enum Controls{
     OPEN
 } Controls;
 
+typedef struct player_t{
+    Vector2 posistion;
+    Vector2 velocity;
+    int hp;
+    int key;
+} player_t;
+
 
 int key_bindings[5];
 
