@@ -1,12 +1,46 @@
+// Created 2025-02-17 by Christoffer Rozenbachs
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <time.h>
 #include "raylib.h"
 #include "raymath.h"
 
+#define WIDTH 21  // Maze width (must be odd)
+#define HEIGHT 21 // Maze height (must be odd)
+#define CELL_SIZE 20
 
-// Created 2025-02-17 by Christoffer Rozenbachs
+char maze[HEIGHT][WIDTH];
+
+void carve(int x, int y) {
+    int dirs[] = {0, 1, 2, 3};
+    for (int i = 0; i < 4; i++) {
+        int r = rand() % 4, temp = dirs[i];
+        dirs[i] = dirs[r];
+        dirs[r] = temp;
+    }
+    for (int i = 0; i < 4; i++) {
+        int dx = (dirs[i] == 0) - (dirs[i] == 1);
+        int dy = (dirs[i] == 2) - (dirs[i] == 3);
+        int nx = x + dx * 2, ny = y + dy * 2;
+        if (nx > 0 && nx < WIDTH - 1 && ny > 0 && ny < HEIGHT - 1 && maze[ny][nx] == '#') {
+            maze[ny - dy][nx - dx] = ' ';
+            maze[ny][nx] = ' ';
+            carve(nx, ny);
+        }
+    }
+}
+
+void generateMaze() {
+    for (int y = 0; y < HEIGHT; y++)
+        for (int x = 0; x < WIDTH; x++)
+            maze[y][x] = (x % 2 && y % 2) ? ' ' : '#';
+    carve(1, 1);
+}
+
+
 
 typedef enum GameScreen{ 
     LOGO,
@@ -43,6 +77,8 @@ int main(){
 
     SetTargetFPS(60);
     InitWindow(screen_width, screen_height, "Endless Dungeon");
+    // InitWindow(WIDTH * CELL_SIZE, HEIGHT * CELL_SIZE, "Maze Generator");
+    generateMaze();
 
     while(!WindowShouldClose()){
 
@@ -53,7 +89,7 @@ int main(){
                 // TODO: Update LOGO screen variables here!
                 frames_counter++;    // Count frames
                 // Wait for 2 seconds (120 frames) before jumping to TITLE screen
-                if (frames_counter > 120)
+                if (frames_counter > 10)
                 {
                     current_screen = TITLE;
                 }
@@ -147,10 +183,18 @@ int main(){
                 } break;
                 case GAMEPLAY:
                 {
+
+                    for (int y = 0; y < HEIGHT; y++) {
+                        for (int x = 0; x < WIDTH; x++) {
+                            if (maze[y][x] == '#')
+                                DrawRectangle(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE, BLACK);
+                        }
+                    }
+
                     // TODO: Draw GAMEPLAY screen here!
-                    DrawRectangle(0, 0, screen_width, screen_height, PURPLE);
-                    DrawText("GAMEPLAY SCREEN", 20, 20, 40, MAROON);
-                    DrawText("PRESS Q to ENDING SCREEN", 130, 220, 20, MAROON);
+                    
+                    DrawText("GAMEPLAY SCREEN", 430, 20, 30, MAROON);
+                    DrawText("PRESS Q to ENDING SCREEN", 430, 220, 20, MAROON);
 
                 } break;
                 case ENDING:
