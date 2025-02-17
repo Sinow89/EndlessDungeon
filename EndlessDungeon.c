@@ -58,7 +58,8 @@ typedef enum Controls{
 } Controls;
 
 typedef struct player_t{
-    Vector2 posistion;
+    Vector2 position;
+    Vector2 size;
     Vector2 velocity;
     int hp;
     int key;
@@ -77,6 +78,9 @@ int main(){
     key_bindings[LEFT] = KEY_A;
     key_bindings[RIGHT] = KEY_D;
     key_bindings[OPEN] = KEY_E;
+
+    player_t player = {200, 200, 20, 20, 5, 5, 100, 0};
+
 
     GameScreen current_screen = LOGO;
 
@@ -143,22 +147,19 @@ int main(){
         /*-------------------------------------------------------*/
 
 
-        if(IsKeyDown(UP)) {
-
+        if(IsKeyPressed(key_bindings[UP]) || IsKeyPressedRepeat(key_bindings[UP])) {
+            player.position.y = player.position.y - 20;
         }
-
-        if(IsKeyDown(DOWN)) {
-
+        if(IsKeyPressed(key_bindings[DOWN]) || IsKeyPressedRepeat(key_bindings[DOWN])) {
+            player.position.y = player.position.y + 20;
         }
-
-        if(IsKeyDown(LEFT)) {
-
+        if(IsKeyPressed(key_bindings[LEFT]) || IsKeyPressedRepeat(key_bindings[LEFT])) {
+            player.position.x = player.position.x - 20;
         }
-
-        if(IsKeyDown(RIGHT)) {
-
+        if(IsKeyPressed(key_bindings[RIGHT]) || IsKeyPressedRepeat(key_bindings[RIGHT])) {
+            player.position.x = player.position.x + 20;
         }
-
+        
         if(IsKeyDown(OPEN)) {
 
         }
@@ -191,11 +192,14 @@ int main(){
                 case GAMEPLAY:
                 {
 
+                    Rectangle player_rec = {player.position.x, player.position.y, player.size.x, player.size.y};
+
                     for (int y = 0; y < HEIGHT; y++) {
                         for (int x = 0; x < WIDTH; x++) {
                             if (maze[y][x] == '#')
-                                DrawRectangle(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE, BLACK);
+                            DrawRectangle(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE, BLACK);
                         }
+                        DrawRectangleRec(player_rec, GRAY);
                     }
 
                     // TODO: Draw GAMEPLAY screen here!
