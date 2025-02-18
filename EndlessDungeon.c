@@ -15,9 +15,13 @@
 
 typedef struct {
     int box;
-    int goal;
     bool walkable;
 } maze_t;
+
+typedef struct{
+    Vector2 position;
+    Vector2 size;
+} goal_t;
 
 maze_t maze[HEIGHT][WIDTH];
 
@@ -31,7 +35,7 @@ void carve(int x, int y) {
     for (int i = 0; i < 4; i++) {
         int dx = (dirs[i] == 0) - (dirs[i] == 1);
         int dy = (dirs[i] == 2) - (dirs[i] == 3);
-        int nx = x + dx * 2, ny = y + dy * 2;
+        int nx = x + dx * 1, ny = y + dy * 1;
         if (nx > 0 && nx < WIDTH - 1 && ny > 0 && ny < HEIGHT - 1 && maze[ny][nx].box == '#') {
             maze[ny - dy][nx - dx].box = ' ';
             maze[ny][nx].box = ' ';
@@ -103,6 +107,7 @@ int main(){
     key_bindings[OPEN] = KEY_E;
 
     player_t player = {200, 200, 20, 20, 5, 5, 100, 0};
+    goal_t goal = {260, 260, 20, 20};
 
 
     GameScreen current_screen = LOGO;
@@ -231,6 +236,8 @@ int main(){
                 {
 
                     Rectangle player_rec = {player.position.x, player.position.y, player.size.x, player.size.y};
+                    Rectangle goal_rec = {goal.position.x, goal.position.y, goal.size.x, goal.size.y};
+                    DrawRectangleRec(goal_rec, RED);
 
                     for (int y = 0; y < HEIGHT; y++) {
                         for (int x = 0; x < WIDTH; x++) {
