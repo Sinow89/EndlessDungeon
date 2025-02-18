@@ -6,4 +6,5 @@ Thought process of milestones to start:
 - Make so when walking to the "door/entrence" you travese to the next room.
 - Make so you one startup create 8 diffrent rooms.
 - Make so a random obejct spawns in one these rooms.
+- Make a bool on the tiles that is walkable, so you can define this way where the player can move and not.
 
