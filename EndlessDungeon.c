@@ -11,8 +11,15 @@
 #define WIDTH 21  // Maze width (must be odd)
 #define HEIGHT 21 // Maze height (must be odd)
 #define CELL_SIZE 20
+#define TILE_SIZE 20
 
-char maze[HEIGHT][WIDTH];
+
+typedef struct {
+    int box;
+    bool walkable;
+} maze_t;
+
+maze_t maze[HEIGHT][WIDTH];
 
 void carve(int x, int y) {
     int dirs[] = {0, 1, 2, 3};
@@ -25,22 +32,38 @@ void carve(int x, int y) {
         int dx = (dirs[i] == 0) - (dirs[i] == 1);
         int dy = (dirs[i] == 2) - (dirs[i] == 3);
         int nx = x + dx * 2, ny = y + dy * 2;
-        if (nx > 0 && nx < WIDTH - 1 && ny > 0 && ny < HEIGHT - 1 && maze[ny][nx] == '#') {
-            maze[ny - dy][nx - dx] = ' ';
-            maze[ny][nx] = ' ';
+        if (nx > 0 && nx < WIDTH - 1 && ny > 0 && ny < HEIGHT - 1 && maze[ny][nx].box == '#') {
+            maze[ny - dy][nx - dx].box = ' ';
+            maze[ny][nx].box = ' ';
+            maze[ny - dy][nx - dx].walkable = true;
+            maze[ny][nx].walkable = true;
             carve(nx, ny);
         }
     }
 }
 
 void generateMaze() {
-    for (int y = 0; y < HEIGHT; y++)
-        for (int x = 0; x < WIDTH; x++)
-            maze[y][x] = (x % 2 && y % 2) ? ' ' : '#';
+    for (int y = 0; y < HEIGHT; y++) {
+        for (int x = 0; x < WIDTH; x++) {
+            maze[y][x].box = (x % 2 && y % 2) ? ' ' : '#';
+            maze[y][x].walkable = (maze[y][x].box == '#'); 
+        }
+    }
     carve(1, 1);
 }
 
-
+bool isPositionWalkable(float x, float y) {
+    // Convert pixel coordinates to maze array indices
+    int mazeX = (int)(x / TILE_SIZE);  // Assuming TILE_SIZE is your tile width
+    int mazeY = (int)(y / TILE_SIZE);  // Assuming TILE_SIZE is your tile height
+    
+    // Check bounds
+    if (mazeX < 0 || mazeX >= WIDTH || mazeY < 0 || mazeY >= HEIGHT) {
+        return false;
+    }
+    
+    return maze[mazeY][mazeX].walkable;
+}
 
 typedef enum GameScreen{ 
     LOGO,
@@ -147,17 +170,32 @@ int main(){
         /*-------------------------------------------------------*/
 
 
-        if(IsKeyPressed(key_bindings[UP]) || IsKeyPressedRepeat(key_bindings[UP])) {
-            player.position.y = player.position.y - 20;
+        if (IsKeyPressed(key_bindings[UP]) || IsKeyPressedRepeat(key_bindings[UP])) {
+            float newY = player.position.y - 20;
+            if (isPositionWalkable(player.position.x, newY)) { 
+                player.position.y = newY; 
+            }
         }
-        if(IsKeyPressed(key_bindings[DOWN]) || IsKeyPressedRepeat(key_bindings[DOWN])) {
-            player.position.y = player.position.y + 20;
+        
+        if (IsKeyPressed(key_bindings[DOWN]) || IsKeyPressedRepeat(key_bindings[DOWN])) {
+            float newY = player.position.y + 20;
+            if (isPositionWalkable(player.position.x, newY)) {
+                player.position.y = newY;
+            }
         }
-        if(IsKeyPressed(key_bindings[LEFT]) || IsKeyPressedRepeat(key_bindings[LEFT])) {
-            player.position.x = player.position.x - 20;
+        
+        if (IsKeyPressed(key_bindings[LEFT]) || IsKeyPressedRepeat(key_bindings[LEFT])) {
+            float newX = player.position.x - 20;
+            if (isPositionWalkable(newX, player.position.y)) {
+                player.position.x = newX;
+            }
         }
-        if(IsKeyPressed(key_bindings[RIGHT]) || IsKeyPressedRepeat(key_bindings[RIGHT])) {
-            player.position.x = player.position.x + 20;
+        
+        if (IsKeyPressed(key_bindings[RIGHT]) || IsKeyPressedRepeat(key_bindings[RIGHT])) {
+            float newX = player.position.x + 20;
+            if (isPositionWalkable(newX, player.position.y)) {
+                player.position.x = newX;
+            }
         }
         
         if(IsKeyDown(OPEN)) {
@@ -196,7 +234,7 @@ int main(){
 
                     for (int y = 0; y < HEIGHT; y++) {
                         for (int x = 0; x < WIDTH; x++) {
-                            if (maze[y][x] == '#')
+                            if (maze[y][x].box == '#')
                             DrawRectangle(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE, BLACK);
                         }
                         DrawRectangleRec(player_rec, GRAY);
