@@ -45,8 +45,8 @@ void carve(int x, int y) {
 void generateMaze() {
     for (int y = 0; y < HEIGHT; y++) {
         for (int x = 0; x < WIDTH; x++) {
-            maze[y][x].box = (x % 2 && y % 2) ? ' ' : '#';
-            maze[y][x].walkable = (maze[y][x].box == '#'); 
+            maze[y][x].box = '#';
+            maze[y][x].walkable = (maze[y][x].box == ' '); 
         }
     }
     carve(1, 1);
