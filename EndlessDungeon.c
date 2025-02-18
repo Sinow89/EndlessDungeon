@@ -13,9 +13,9 @@
 #define CELL_SIZE 20
 #define TILE_SIZE 20
 
-
 typedef struct {
     int box;
+    int goal;
     bool walkable;
 } maze_t;
 
