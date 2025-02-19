@@ -60,6 +60,9 @@ void create_tiles(){
         }
     }
     tiles[10][0].type = DOOR;
+    tiles[0][10].type = DOOR;
+    tiles[19][10].type = DOOR;
+    tiles[10][19].type = DOOR;
 };
 
 void draw_tiles(){
@@ -72,6 +75,9 @@ void draw_tiles(){
 
 void draw_door(){
     DrawRectangle(0, 200, 20, 20, RED);
+    DrawRectangle(200, 0, 20, 20, RED);
+    DrawRectangle(200, 380, 20, 20, RED);
+    DrawRectangle(380, 200, 20, 20, RED);
 };
 
 player_t player = {200, 200, 20, 20, 5, 5, 100, 0};
@@ -94,7 +100,13 @@ void move_player(Vector2 direction) {
 }
 
 bool player_can_open() {
-    return (tiles[10][0].position.x == player.position.x && tiles[10][0].position.y == player.position.y);
+    int tile_x = player.position.x / 20;
+    int tile_y = player.position.y / 20;
+
+    if (tiles[tile_y][tile_x].type == DOOR) {
+        return true;
+    }
+    return false;
 }
 
 int main(){
