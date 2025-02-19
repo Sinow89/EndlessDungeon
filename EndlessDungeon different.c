@@ -59,6 +59,7 @@ void create_tiles(){
             tiles[y][x].position.x = x * 20;
         }
     }
+    tiles[10][0].type = DOOR;
 };
 
 void draw_tiles(){
@@ -73,6 +74,25 @@ void draw_door(){
     DrawRectangle(0, 200, 20, 20, RED);
 };
 
+player_t player = {200, 200, 20, 20, 5, 5, 100, 0};
+
+void move_player(Vector2 direction) {
+    Vector2 new_position = {player.position.x + direction.x, player.position.y + direction.y };
+
+    int tile_x = new_position.x / 20;
+    int tile_y = new_position.y / 20;
+
+    if (tile_x < 0 || tile_x >= MAP_WIDTH || tile_y < 0 || tile_y >= MAP_HEIGHT) return;
+
+    if (tiles[tile_y][tile_x].type == FLOOR) {
+        player.position = new_position;
+    }
+
+    if (tiles[tile_y][tile_x].type == DOOR) {
+        player.position = new_position;
+    }
+}
+
 
 int main(){
 
@@ -83,9 +103,8 @@ int main(){
     key_bindings[LEFT] = KEY_A;
     key_bindings[RIGHT] = KEY_D;
     key_bindings[OPEN] = KEY_E;
-    
-    player_t player = {200, 200, 20, 20, 5, 5, 100, 0};
-    GameScreen current_screen = LOGO;
+
+    GameScreen current_screen = GAMEPLAY;
 
     int frames_counter = 0; 
 
@@ -148,30 +167,26 @@ int main(){
         /*-------------------------------------------------------*/
 
 
-        if (IsKeyPressed(key_bindings[UP]) || IsKeyPressedRepeat(key_bindings[UP])) {
-            player.position.y = player.position.y - 20;
- 
-        }
-        
+        if (IsKeyPressed(key_bindings[UP]) || IsKeyPressedRepeat(key_bindings[UP])){
+            move_player((Vector2){0, -20});
+        } 
+    
         if (IsKeyPressed(key_bindings[DOWN]) || IsKeyPressedRepeat(key_bindings[DOWN])) {
-            player.position.y = player.position.y + 20;
-
+            move_player((Vector2){0, 20});
         }
-        
+    
         if (IsKeyPressed(key_bindings[LEFT]) || IsKeyPressedRepeat(key_bindings[LEFT])) {
-            player.position.x = player.position.x - 20;
-
+            move_player((Vector2){-20, 0});
         }
-        
+    
         if (IsKeyPressed(key_bindings[RIGHT]) || IsKeyPressedRepeat(key_bindings[RIGHT])) {
-            player.position.x = player.position.x + 20;
-
-        }
-        
-        if(IsKeyDown(OPEN)) {
-
+            move_player((Vector2){20, 0});
         }
 
+        if (IsKeyPressed(key_bindings[OPEN]) && tiles[10][0].type == DOOR) {
+            player.position.x = 200;
+            player.position.y = 200;
+        }
         /*-------------------------------------------------------*/
         /*----------------------Drawing--------------------------*/
         /*-------------------------------------------------------*/
