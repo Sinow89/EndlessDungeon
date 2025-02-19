@@ -9,7 +9,7 @@
 #include "raymath.h"
 
 #define MAP_HEIGHT 20
-#define MAP_WIDTH 10
+#define MAP_WIDTH 20
 
 int key_bindings[5];
 const int screen_width = 800;
@@ -69,6 +69,10 @@ void draw_tiles(){
     }
 };
 
+void draw_door(){
+    DrawRectangle(0, 200, 20, 20, RED);
+};
+
 
 int main(){
 
@@ -87,8 +91,6 @@ int main(){
 
     SetTargetFPS(60);
     InitWindow(screen_width, screen_height, "Endless Dungeon");
-    // InitWindow(WIDTH * CELL_SIZE, HEIGHT * CELL_SIZE, "Maze Generator");
-
 
     while(!WindowShouldClose()){
 
@@ -198,6 +200,7 @@ int main(){
                 case GAMEPLAY:
                 {
                     draw_tiles();
+                    draw_door();
                     
                     Rectangle player_rec = {player.position.x, player.position.y, player.size.x, player.size.y};
                     DrawRectangleRec(player_rec, BLACK);
