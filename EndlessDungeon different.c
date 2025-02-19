@@ -93,6 +93,9 @@ void move_player(Vector2 direction) {
     }
 }
 
+bool player_can_open() {
+    return (tiles[10][0].position.x == player.position.x && tiles[10][0].position.y == player.position.y);
+}
 
 int main(){
 
@@ -183,7 +186,7 @@ int main(){
             move_player((Vector2){20, 0});
         }
 
-        if (IsKeyPressed(key_bindings[OPEN]) && tiles[10][0].type == DOOR) {
+        if (IsKeyPressed(key_bindings[OPEN]) && player_can_open()) {
             player.position.x = 200;
             player.position.y = 200;
         }
@@ -214,6 +217,7 @@ int main(){
                 } break;
                 case GAMEPLAY:
                 {
+                    player_can_open();
                     draw_tiles();
                     draw_door();
                     
