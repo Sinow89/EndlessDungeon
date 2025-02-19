@@ -1,4 +1,4 @@
-// Created 2025-02-17 by Christoffer Rozenbachs
+// Created 2025-02-19 by Christoffer Rozenbachs
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,10 +8,18 @@
 #include "raylib.h"
 #include "raymath.h"
 
-#define WIDTH 21  // Maze width (must be odd)
-#define HEIGHT 21 // Maze height (must be odd)
-#define CELL_SIZE 20
-#define TILE_SIZE 20
+#define MAP_HEIGHT 20
+#define MAP_WIDTH 10
+
+int key_bindings[5];
+const int screen_width = 800;
+const int screen_height = 600;
+
+typedef enum tiles_type{
+    FLOOR,
+    WALL,
+    DOOR,
+} tiles_type;
 
 typedef enum GameScreen{ 
     LOGO,
@@ -36,11 +44,35 @@ typedef struct player_t{
     int key;
 } player_t;
 
-int key_bindings[5];
-const int screen_width = 800;
-const int screen_height = 600;
+typedef struct tiles_t{
+    Vector2 position;
+    Vector2 size;
+    int type;
+} tiles_t;
+
+tiles_t tiles[MAP_HEIGHT][MAP_WIDTH];
+
+void create_tiles(){
+    for (int y = 0; y < MAP_HEIGHT; y++){
+        for (int x = 0; x < MAP_WIDTH; x++){
+            tiles[y][x].position.y = y * 20;
+            tiles[y][x].position.x = x * 20;
+        }
+    }
+};
+
+void draw_tiles(){
+    for (int y = 0; y < MAP_HEIGHT; y++){
+        for (int x = 0; x < MAP_WIDTH; x++){
+            DrawRectangle(tiles[y][x].position.y, tiles[y][x].position.x, 20, 20, GRAY);
+        }
+    }
+};
+
 
 int main(){
+
+    create_tiles();
     
     key_bindings[UP] = KEY_W;
     key_bindings[DOWN] = KEY_S;
@@ -165,15 +197,10 @@ int main(){
                 } break;
                 case GAMEPLAY:
                 {
-
+                    draw_tiles();
+                    
                     Rectangle player_rec = {player.position.x, player.position.y, player.size.x, player.size.y};
-  
-
-                 
-                        DrawRectangleRec(player_rec, GRAY);
-             
-
-                    // TODO: Draw GAMEPLAY screen here!
+                    DrawRectangleRec(player_rec, BLACK);
                     
                     DrawText("GAMEPLAY SCREEN", 430, 20, 30, MAROON);
                     DrawText("PRESS Q to ENDING SCREEN", 430, 220, 20, MAROON);
