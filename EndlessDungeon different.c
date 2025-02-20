@@ -63,17 +63,19 @@ void create_tiles(){
     tiles[0][10].type = DOOR;
     tiles[19][10].type = DOOR;
     tiles[10][19].type = DOOR;
+    tiles[5][5].type = WALL;
 };
 
 void draw_tiles(){
     for (int y = 0; y < MAP_HEIGHT; y++){
         for (int x = 0; x < MAP_WIDTH; x++){
-            DrawRectangle(tiles[y][x].position.y, tiles[y][x].position.x, 20, 20, GRAY);
+            DrawRectangle(tiles[y][x].position.x, tiles[y][x].position.y, 20, 20, GRAY);
         }
     }
 };
 
 void draw_door(){
+
     DrawRectangle(0, 200, 20, 20, RED);
     DrawRectangle(200, 0, 20, 20, RED);
     DrawRectangle(200, 380, 20, 20, RED);
@@ -88,14 +90,19 @@ void move_player(Vector2 direction) {
     int tile_x = new_position.x / 20;
     int tile_y = new_position.y / 20;
 
-    if (tile_x < 0 || tile_x >= MAP_WIDTH || tile_y < 0 || tile_y >= MAP_HEIGHT) return;
-
+    if (tile_x < 0 || tile_x >= MAP_WIDTH || tile_y < 0 || tile_y >= MAP_HEIGHT) {
+        return;
+    }
     if (tiles[tile_y][tile_x].type == FLOOR) {
         player.position = new_position;
     }
 
     if (tiles[tile_y][tile_x].type == DOOR) {
         player.position = new_position;
+    }
+
+    if (tiles[tile_y][tile_x].type == WALL) {
+        return;
     }
 }
 
@@ -232,6 +239,7 @@ int main(){
                     player_can_open();
                     draw_tiles();
                     draw_door();
+                    DrawRectangle(tiles[5][5].position.x, tiles[5][5].position.y, 20,20, YELLOW);
                     
                     Rectangle player_rec = {player.position.x, player.position.y, player.size.x, player.size.y};
                     DrawRectangleRec(player_rec, BLACK);
