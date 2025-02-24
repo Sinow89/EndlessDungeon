@@ -82,22 +82,32 @@ void draw_tiles(){
     }
 };
 
-//Redo so this draws squares that are type walls.
-void draw_floor(){
-    for (int y = 5; y < 15; y++){
-        for (int x = 40; x < 50; x++){
-            DrawRectangle(tiles[y][x].position.x, tiles[y][x].position.y, 20, 20, GRAY);
-            tiles[y][x].type = FLOOR;
-        }
-    }
-};
-
 void draw_door(){
     DrawRectangle(0, 200, 20, 20, RED);
     DrawRectangle(200, 0, 20, 20, RED);
     DrawRectangle(200, 380, 20, 20, RED);
     DrawRectangle(380, 200, 20, 20, RED);
 };
+
+//Redo so this draws squares that are type walls.
+// void draw_floor(){
+//     for (int y = 5; y < 15; y++){
+//         for (int x = 40; x < 50; x++){
+//             DrawRectangle(tiles[y][x].position.x, tiles[y][x].position.y, 20, 20, GRAY);
+//             tiles[y][x].type = FLOOR;
+//         }
+//     }
+// };
+
+
+void add_room(room_t room) {
+    for (int y = room.position.y; y < room.position.y + room.height; y++) {
+        for (int x = room.position.x; x < room.position.x + room.width; x++) {
+            DrawRectangle(tiles[y][x].position.x, tiles[y][x].position.y, 20, 20, YELLOW);
+            tiles[y][x].type = FLOOR;
+        }
+    }
+}
 
 room_t create_room(int y, int x, int height, int width){
     room_t new_room;
@@ -112,12 +122,35 @@ room_t create_room(int y, int x, int height, int width){
     return new_room;
 }
 
-void add_room(room_t room) {
-    for (int y = room.position.y; y < room.position.y + room.height; y++) {
-        for (int x = room.position.x; x < room.position.x + room.width; x++) {
-            DrawRectangle(tiles[y][x].position.x, tiles[y][x].position.y, 20, 20, YELLOW);
-            tiles[y][x].type = FLOOR;
-        }
+void draw_floor(){
+    int y, x, height, width, n_rooms;
+    room_t* rooms = calloc(n_rooms, sizeof(room_t));
+    n_rooms = (rand() % 11) + 5;
+
+    for (int i = 0; i < n_rooms; i++ ){
+        y = (rand() % (MAP_HEIGHT - 10)) + 1;
+        x = (rand() % (MAP_WIDTH - 20)) + 1;
+        height = (rand() % 7) + 3;
+        width = (rand() % 15) + 5;
+        rooms[i] = create_room(y, x, height, width);
+        add_room(rooms[i]);
+
+    }
+};
+
+void connectRoomCenters(Vector2 centerOne, Vector2 centerTwo) {
+    Vector2 temp = centerOne;
+
+    while (temp.x != centerTwo.x || temp.y != centerTwo.y) { 
+        if (temp.x < centerTwo.x) temp.x++;
+        else if (temp.x > centerTwo.x) temp.x--;
+
+        if (temp.y < centerTwo.y) temp.y++;
+        else if (temp.y > centerTwo.y) temp.y--;
+
+        tiles[(int)temp.y][(int)temp.x].type = FLOOR;
+
+        DrawRectangle(temp.x * 20, temp.y * 20, 20, 20, GRAY);
     }
 }
 
@@ -155,9 +188,13 @@ bool player_can_open() {
     return false;
 }
 
+room_t rooms[20]; // Maximum number of rooms
+int n_rooms; // Actual number of rooms
+
 int main(){
 
     create_tiles();
+    srand(time(NULL));
     
     key_bindings[UP] = KEY_W;
     key_bindings[DOWN] = KEY_S;
@@ -171,7 +208,23 @@ int main(){
 
     SetTargetFPS(60);
     InitWindow(screen_width, screen_height, "Endless Dungeon");
+    
+    
+    n_rooms = (rand() % 11) + 5; // 5 to 15 rooms
+    for (int i = 0; i < n_rooms; i++) {
+        int y = (rand() % (MAP_HEIGHT - 10)) + 1;
+        int x = (rand() % (MAP_WIDTH - 20)) + 1;
+        int height = (rand() % 7) + 3;
+        int width = (rand() % 15) + 5;
 
+        rooms[i] = create_room(y, x, height, width);
+        add_room(rooms[i]); // This sets tiles[y][x].type = FLOOR
+    }
+
+    for (int i = 0; i < n_rooms - 1; i++) {
+        connectRoomCenters(rooms[i].center, rooms[i + 1].center);
+    }
+    
     while(!WindowShouldClose()){
 
         switch (current_screen)
@@ -277,11 +330,20 @@ int main(){
                 {
                     player_can_open();
                     draw_tiles();
+
+                    for (int i = 0; i < n_rooms; i++) {
+                        add_room(rooms[i]);
+                    }
+
+                    for (int i = 0; i < n_rooms - 1; i++) {
+                        connectRoomCenters(rooms[i].center, rooms[i + 1].center);
+                    }
+
                     // draw_door();
-                    draw_floor();
-                    room_t room = create_room(5, 5, 20, 20);
-                    add_room(room);
-                    DrawRectangle(tiles[5][5].position.x, tiles[5][5].position.y, 20,20, YELLOW);
+                    // room_t room = create_room(5, 5, 20, 20);
+                    // add_room(room);
+                    // draw_floor();
+                    // DrawRectangle(tiles[5][5].position.x, tiles[5][5].position.y, 20,20, YELLOW);
                     
                     Rectangle player_rec = {player.position.x, player.position.y, player.size.x, player.size.y};
                     DrawRectangleRec(player_rec, WHITE);
