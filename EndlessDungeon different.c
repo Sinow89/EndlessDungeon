@@ -8,12 +8,12 @@
 #include "raylib.h"
 #include "raymath.h"
 
-#define MAP_HEIGHT 20
-#define MAP_WIDTH 20
+#define MAP_HEIGHT 25
+#define MAP_WIDTH 100
 
 int key_bindings[5];
-const int screen_width = 800;
-const int screen_height = 600;
+const int screen_width = 1024;
+const int screen_height = 768;
 
 typedef enum tiles_type{
     FLOOR,
@@ -57,6 +57,7 @@ void create_tiles(){
         for (int x = 0; x < MAP_WIDTH; x++){
             tiles[y][x].position.y = y * 20;
             tiles[y][x].position.x = x * 20;
+            tiles[y][x].type = WALL;
         }
     }
     tiles[10][0].type = DOOR;
@@ -69,7 +70,17 @@ void create_tiles(){
 void draw_tiles(){
     for (int y = 0; y < MAP_HEIGHT; y++){
         for (int x = 0; x < MAP_WIDTH; x++){
+            DrawRectangle(tiles[y][x].position.x, tiles[y][x].position.y, 20, 20, BLACK);
+        }
+    }
+};
+
+//Redo so this draws squares that are type walls.
+void draw_floor(){
+    for (int y = 5; y < 15; y++){
+        for (int x = 40; x < 50; x++){
             DrawRectangle(tiles[y][x].position.x, tiles[y][x].position.y, 20, 20, GRAY);
+            tiles[y][x].type = FLOOR;
         }
     }
 };
@@ -82,7 +93,7 @@ void draw_door(){
     DrawRectangle(380, 200, 20, 20, RED);
 };
 
-player_t player = {200, 200, 20, 20, 5, 5, 100, 0};
+player_t player = {960, 200, 20, 20, 5, 5, 100, 0};
 
 void move_player(Vector2 direction) {
     Vector2 new_position = {player.position.x + direction.x, player.position.y + direction.y };
@@ -239,10 +250,11 @@ int main(){
                     player_can_open();
                     draw_tiles();
                     draw_door();
+                    draw_floor();
                     DrawRectangle(tiles[5][5].position.x, tiles[5][5].position.y, 20,20, YELLOW);
                     
                     Rectangle player_rec = {player.position.x, player.position.y, player.size.x, player.size.y};
-                    DrawRectangleRec(player_rec, BLACK);
+                    DrawRectangleRec(player_rec, WHITE);
                     
                     DrawText("GAMEPLAY SCREEN", 430, 20, 30, MAROON);
                     DrawText("PRESS Q to ENDING SCREEN", 430, 220, 20, MAROON);
