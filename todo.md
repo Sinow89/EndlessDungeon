@@ -8,4 +8,5 @@ Thought process of milestones to start:
 - Make so a random obejct spawns in one these rooms.
 - ~~Make a bool on the tiles that is walkable, so you can define this way where the player can move and not.~~
 - Create enum tiles.
+- Refactor and combine tile_t and room_t instead for two almost similar structs.
 

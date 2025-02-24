@@ -8,12 +8,12 @@
 #include "raylib.h"
 #include "raymath.h"
 
-#define MAP_HEIGHT 25
-#define MAP_WIDTH 100
+#define MAP_HEIGHT 45 // 900/20 = 45, files the whole screen
+#define MAP_WIDTH 90 // 1800/20 = 90
 
 int key_bindings[5];
-const int screen_width = 1024;
-const int screen_height = 768;
+const int screen_height = MAP_HEIGHT*20;
+const int screen_width = MAP_WIDTH*20;
 
 typedef enum tiles_type{
     FLOOR,
@@ -49,6 +49,13 @@ typedef struct tiles_t{
     Vector2 size;
     int type;
 } tiles_t;
+
+typedef struct room_t{
+  int height; 
+  int width;
+  Vector2 position;
+  Vector2 center;
+} room_t;
 
 tiles_t tiles[MAP_HEIGHT][MAP_WIDTH];
 
@@ -86,20 +93,41 @@ void draw_floor(){
 };
 
 void draw_door(){
-
     DrawRectangle(0, 200, 20, 20, RED);
     DrawRectangle(200, 0, 20, 20, RED);
     DrawRectangle(200, 380, 20, 20, RED);
     DrawRectangle(380, 200, 20, 20, RED);
 };
 
+room_t create_room(int y, int x, int height, int width){
+    room_t new_room;
+
+    new_room.position.y = y;
+    new_room.position.x = x;
+    new_room.height = height;
+    new_room.width = width;
+    new_room.center.y = y + (int)(height * 0.5);
+    new_room.center.x = x + (int)(width * 0.5);
+
+    return new_room;
+}
+
+void add_room(room_t room) {
+    for (int y = room.position.y; y < room.position.y + room.height; y++) {
+        for (int x = room.position.x; x < room.position.x + room.width; x++) {
+            DrawRectangle(tiles[y][x].position.x, tiles[y][x].position.y, 20, 20, YELLOW);
+            tiles[y][x].type = FLOOR;
+        }
+    }
+}
+
 player_t player = {960, 200, 20, 20, 5, 5, 100, 0};
 
 void move_player(Vector2 direction) {
     Vector2 new_position = {player.position.x + direction.x, player.position.y + direction.y };
 
-    int tile_x = new_position.x / 20;
-    int tile_y = new_position.y / 20;
+    int tile_x = new_position.x * 0.05;
+    int tile_y = new_position.y * 0.05;
 
     if (tile_x < 0 || tile_x >= MAP_WIDTH || tile_y < 0 || tile_y >= MAP_HEIGHT) {
         return;
@@ -249,8 +277,10 @@ int main(){
                 {
                     player_can_open();
                     draw_tiles();
-                    draw_door();
+                    // draw_door();
                     draw_floor();
+                    room_t room = create_room(5, 5, 20, 20);
+                    add_room(room);
                     DrawRectangle(tiles[5][5].position.x, tiles[5][5].position.y, 20,20, YELLOW);
                     
                     Rectangle player_rec = {player.position.x, player.position.y, player.size.x, player.size.y};
