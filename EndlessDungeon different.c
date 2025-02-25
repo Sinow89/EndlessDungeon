@@ -318,6 +318,7 @@ int main(){
 
         if (IsKeyPressed(KEY_R)) {
             create_random_room();
+            create_tiles();
         }
 
         /*-------------------------------------------------------*/
