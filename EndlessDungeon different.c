@@ -122,6 +122,8 @@ room_t create_room(int y, int x, int height, int width){
     return new_room;
 }
 
+player_t player = {960, 200, 20, 20, 5, 5, 100, 0};
+
 void draw_floor(){
     int y, x, height, width, n_rooms;
     room_t* rooms = calloc(n_rooms, sizeof(room_t));
@@ -172,6 +174,8 @@ void create_random_room(){
     for (int i = 0; i < n_rooms - 1; i++) {
         connect_room_centers(rooms[i].center, rooms[i + 1].center);
     }
+    player.position.y = rooms[0].center.y * 20;
+    player.position.x = rooms[0].center.x * 20;
 };
 
 void draw_random_room(){
@@ -184,7 +188,7 @@ void draw_random_room(){
     }
 };
 
-player_t player = {960, 200, 20, 20, 5, 5, 100, 0};
+
 
 void move_player(Vector2 direction) {
     Vector2 new_position = {player.position.x + direction.x, player.position.y + direction.y };
@@ -312,8 +316,8 @@ int main(){
         }
 
         if (IsKeyPressed(key_bindings[OPEN]) && player_can_open()) {
-            player.position.x = 200;
-            player.position.y = 200;
+            create_random_room();
+            create_tiles();
         }
 
         if (IsKeyPressed(KEY_R)) {
