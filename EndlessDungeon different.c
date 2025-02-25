@@ -138,7 +138,7 @@ void draw_floor(){
     }
 };
 
-void connectRoomCenters(Vector2 centerOne, Vector2 centerTwo) {
+void connect_room_centers(Vector2 centerOne, Vector2 centerTwo) {
     Vector2 temp = centerOne;
 
     while (temp.x != centerTwo.x || temp.y != centerTwo.y) { 
@@ -153,6 +153,36 @@ void connectRoomCenters(Vector2 centerOne, Vector2 centerTwo) {
         DrawRectangle(temp.x * 20, temp.y * 20, 20, 20, GRAY);
     }
 }
+
+room_t rooms[20]; // Maximum number of rooms
+int n_rooms; // Actual number of rooms
+
+void create_random_room(){
+    n_rooms = (rand() % 11) + 5; // 5 to 15 rooms
+    for (int i = 0; i < n_rooms; i++) {
+        int y = (rand() % (MAP_HEIGHT - 10)) + 1;
+        int x = (rand() % (MAP_WIDTH - 20)) + 1;
+        int height = (rand() % 7) + 3;
+        int width = (rand() % 15) + 5;
+
+        rooms[i] = create_room(y, x, height, width);
+        add_room(rooms[i]); // This sets tiles[y][x].type = FLOOR
+    }
+
+    for (int i = 0; i < n_rooms - 1; i++) {
+        connect_room_centers(rooms[i].center, rooms[i + 1].center);
+    }
+};
+
+void draw_random_room(){
+    for (int i = 0; i < n_rooms; i++) {
+        add_room(rooms[i]);
+    }
+
+    for (int i = 0; i < n_rooms - 1; i++) {
+        connect_room_centers(rooms[i].center, rooms[i + 1].center);
+    }
+};
 
 player_t player = {960, 200, 20, 20, 5, 5, 100, 0};
 
@@ -188,8 +218,7 @@ bool player_can_open() {
     return false;
 }
 
-room_t rooms[20]; // Maximum number of rooms
-int n_rooms; // Actual number of rooms
+
 
 int main(){
 
@@ -208,22 +237,7 @@ int main(){
 
     SetTargetFPS(60);
     InitWindow(screen_width, screen_height, "Endless Dungeon");
-    
-    
-    n_rooms = (rand() % 11) + 5; // 5 to 15 rooms
-    for (int i = 0; i < n_rooms; i++) {
-        int y = (rand() % (MAP_HEIGHT - 10)) + 1;
-        int x = (rand() % (MAP_WIDTH - 20)) + 1;
-        int height = (rand() % 7) + 3;
-        int width = (rand() % 15) + 5;
-
-        rooms[i] = create_room(y, x, height, width);
-        add_room(rooms[i]); // This sets tiles[y][x].type = FLOOR
-    }
-
-    for (int i = 0; i < n_rooms - 1; i++) {
-        connectRoomCenters(rooms[i].center, rooms[i + 1].center);
-    }
+    create_random_room();
     
     while(!WindowShouldClose()){
 
@@ -301,6 +315,11 @@ int main(){
             player.position.x = 200;
             player.position.y = 200;
         }
+
+        if (IsKeyPressed(KEY_R)) {
+            create_random_room();
+        }
+
         /*-------------------------------------------------------*/
         /*----------------------Drawing--------------------------*/
         /*-------------------------------------------------------*/
@@ -330,14 +349,8 @@ int main(){
                 {
                     player_can_open();
                     draw_tiles();
+                    draw_random_room();
 
-                    for (int i = 0; i < n_rooms; i++) {
-                        add_room(rooms[i]);
-                    }
-
-                    for (int i = 0; i < n_rooms - 1; i++) {
-                        connectRoomCenters(rooms[i].center, rooms[i + 1].center);
-                    }
 
                     // draw_door();
                     // room_t room = create_room(5, 5, 20, 20);
