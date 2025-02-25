@@ -178,8 +178,8 @@ void draw_random_room(){
     for (int i = 0; i < n_rooms - 1; i++) {
         connect_room_centers(rooms[i].center, rooms[i + 1].center);
     }
-    tiles[(int)rooms[5].center.y][(int)rooms[5].center.x].type = DOOR; 
-    DrawRectangle((rooms[5].center.x * 20), (rooms[5].center.y * 20), 20, 20, RED);
+    tiles[(int)rooms[1].center.y][(int)rooms[1].center.x].type = DOOR; 
+    DrawRectangle((rooms[1].center.x * 20), (rooms[1].center.y * 20), 20, 20, RED);
 };
 
 
