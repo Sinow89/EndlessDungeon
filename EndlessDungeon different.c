@@ -14,6 +14,7 @@
 int key_bindings[5];
 const int screen_height = MAP_HEIGHT*20;
 const int screen_width = MAP_WIDTH*20;
+int n_rooms = 1; // Actual number of rooms
 
 typedef enum tiles_type{
     FLOOR,
@@ -58,6 +59,8 @@ typedef struct room_t{
 } room_t;
 
 tiles_t tiles[MAP_HEIGHT][MAP_WIDTH];
+player_t player = {960, 200, 20, 20, 5, 5, 100, 0};
+room_t rooms[15]; // Maximum number of rooms
 
 void create_tiles(){
     for (int y = 0; y < MAP_HEIGHT; y++){
@@ -67,47 +70,7 @@ void create_tiles(){
             tiles[y][x].type = WALL;
         }
     }
-    tiles[10][0].type = DOOR;
-    tiles[0][10].type = DOOR;
-    tiles[19][10].type = DOOR;
-    tiles[10][19].type = DOOR;
-    tiles[5][5].type = WALL;
 };
-
-void draw_tiles(){
-    for (int y = 0; y < MAP_HEIGHT; y++){
-        for (int x = 0; x < MAP_WIDTH; x++){
-            DrawRectangle(tiles[y][x].position.x, tiles[y][x].position.y, 20, 20, BLACK);
-        }
-    }
-};
-
-void draw_door(){
-    DrawRectangle(0, 200, 20, 20, RED);
-    DrawRectangle(200, 0, 20, 20, RED);
-    DrawRectangle(200, 380, 20, 20, RED);
-    DrawRectangle(380, 200, 20, 20, RED);
-};
-
-//Redo so this draws squares that are type walls.
-// void draw_floor(){
-//     for (int y = 5; y < 15; y++){
-//         for (int x = 40; x < 50; x++){
-//             DrawRectangle(tiles[y][x].position.x, tiles[y][x].position.y, 20, 20, GRAY);
-//             tiles[y][x].type = FLOOR;
-//         }
-//     }
-// };
-
-
-void add_room(room_t room) {
-    for (int y = room.position.y; y < room.position.y + room.height; y++) {
-        for (int x = room.position.x; x < room.position.x + room.width; x++) {
-            DrawRectangle(tiles[y][x].position.x, tiles[y][x].position.y, 20, 20, GRAY);
-            tiles[y][x].type = FLOOR;
-        }
-    }
-}
 
 room_t create_room(int y, int x, int height, int width){
     room_t new_room;
@@ -122,23 +85,14 @@ room_t create_room(int y, int x, int height, int width){
     return new_room;
 }
 
-player_t player = {960, 200, 20, 20, 5, 5, 100, 0};
-
-void draw_floor(){
-    int y, x, height, width, n_rooms;
-    room_t* rooms = calloc(n_rooms, sizeof(room_t));
-    n_rooms = (rand() % 11) + 5;
-
-    for (int i = 0; i < n_rooms; i++ ){
-        y = (rand() % (MAP_HEIGHT - 10)) + 1;
-        x = (rand() % (MAP_WIDTH - 20)) + 1;
-        height = (rand() % 7) + 3;
-        width = (rand() % 15) + 5;
-        rooms[i] = create_room(y, x, height, width);
-        add_room(rooms[i]);
-
+void add_room(room_t room) {
+    for (int y = room.position.y; y < room.position.y + room.height; y++) {
+        for (int x = room.position.x; x < room.position.x + room.width; x++) {
+            DrawRectangle(tiles[y][x].position.x, tiles[y][x].position.y, 20, 20, GRAY);
+            tiles[y][x].type = FLOOR;
+        }
     }
-};
+}
 
 void connect_room_centers(Vector2 centerOne, Vector2 centerTwo) {
     Vector2 temp = centerOne;
@@ -156,9 +110,6 @@ void connect_room_centers(Vector2 centerOne, Vector2 centerTwo) {
         DrawRectangle(temp.x * 20, temp.y * 20, 20, 20, GRAY);
     }
 }
-
-room_t rooms[20]; // Maximum number of rooms
-int n_rooms; // Actual number of rooms
 
 void create_random_room(){
     n_rooms = (rand() % 11) + 5; // 5 to 15 rooms
@@ -178,19 +129,6 @@ void create_random_room(){
     player.position.y = rooms[0].center.y * 20;
     player.position.x = rooms[0].center.x * 20;
 };
-
-void draw_random_room(){
-    for (int i = 0; i < n_rooms; i++) {
-        add_room(rooms[i]);
-    }
-
-    for (int i = 0; i < n_rooms - 1; i++) {
-        connect_room_centers(rooms[i].center, rooms[i + 1].center);
-    }
-    DrawRectangle((rooms[4].center.x * 20), (rooms[4].center.y * 20), 20, 20, RED);
-    tiles[(int)rooms[4].center.y][(int)rooms[4].center.x].type = DOOR; 
-};
-
 
 void move_player(Vector2 direction) {
     Vector2 new_position = {player.position.x + direction.x, player.position.y + direction.y };
@@ -224,6 +162,30 @@ bool player_can_open() {
     return false;
 }
 
+void draw_tiles(){
+    for (int y = 0; y < MAP_HEIGHT; y++){
+        for (int x = 0; x < MAP_WIDTH; x++){
+            DrawRectangle(tiles[y][x].position.x, tiles[y][x].position.y, 20, 20, BLACK);
+        }
+    }
+};
+
+void draw_random_room(){
+    for (int i = 0; i < n_rooms; i++) {
+        add_room(rooms[i]);
+    }
+    
+    for (int i = 0; i < n_rooms - 1; i++) {
+        connect_room_centers(rooms[i].center, rooms[i + 1].center);
+    }
+    tiles[(int)rooms[5].center.y][(int)rooms[5].center.x].type = DOOR; 
+    DrawRectangle((rooms[5].center.x * 20), (rooms[5].center.y * 20), 20, 20, RED);
+};
+
+
+/*-------------------------------------------------------*/
+/*----------------------MAIN-----------------------------*/
+/*-------------------------------------------------------*/
 
 
 int main(){
@@ -291,12 +253,6 @@ int main(){
         }
 
         /*-------------------------------------------------------*/
-        /*----------------------Game-logic-----------------------*/
-        /*-------------------------------------------------------*/
-
-
-
-        /*-------------------------------------------------------*/
         /*----------------------Controls-------------------------*/
         /*-------------------------------------------------------*/
 
@@ -358,17 +314,8 @@ int main(){
                     draw_tiles();
                     draw_random_room();
 
-
-                    // draw_door();
-                    // room_t room = create_room(5, 5, 20, 20);
-                    // add_room(room);
-                    // draw_floor();
-                    // DrawRectangle(tiles[5][5].position.x, tiles[5][5].position.y, 20,20, YELLOW);
-                    
                     Rectangle player_rec = {player.position.x, player.position.y, player.size.x, player.size.y};
                     DrawRectangleRec(player_rec, WHITE);
-                    // DrawRectangle((rooms[5].center.x * 20), (rooms[5].center.y * 20), 20, 20, RED);
-                    
                     // DrawText("GAMEPLAY SCREEN", 430, 20, 30, MAROON);
                     // DrawText("PRESS Q to ENDING SCREEN", 430, 220, 20, MAROON);
 
