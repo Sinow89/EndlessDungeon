@@ -103,7 +103,7 @@ void draw_door(){
 void add_room(room_t room) {
     for (int y = room.position.y; y < room.position.y + room.height; y++) {
         for (int x = room.position.x; x < room.position.x + room.width; x++) {
-            DrawRectangle(tiles[y][x].position.x, tiles[y][x].position.y, 20, 20, YELLOW);
+            DrawRectangle(tiles[y][x].position.x, tiles[y][x].position.y, 20, 20, GRAY);
             tiles[y][x].type = FLOOR;
         }
     }
@@ -143,15 +143,16 @@ void draw_floor(){
 void connect_room_centers(Vector2 centerOne, Vector2 centerTwo) {
     Vector2 temp = centerOne;
 
-    while (temp.x != centerTwo.x || temp.y != centerTwo.y) { 
-        if (temp.x < centerTwo.x) temp.x++;
-        else if (temp.x > centerTwo.x) temp.x--;
-
-        if (temp.y < centerTwo.y) temp.y++;
-        else if (temp.y > centerTwo.y) temp.y--;
+    while (true) {
+        if ((int)temp.x != (int)centerTwo.x) {
+            temp.x += (centerTwo.x > temp.x) ? 1 : -1;
+        } else if ((int)temp.y != (int)centerTwo.y) {
+            temp.y += (centerTwo.y > temp.y) ? 1 : -1;
+        } else {
+            break;
+        }
 
         tiles[(int)temp.y][(int)temp.x].type = FLOOR;
-
         DrawRectangle(temp.x * 20, temp.y * 20, 20, 20, GRAY);
     }
 }
@@ -186,8 +187,9 @@ void draw_random_room(){
     for (int i = 0; i < n_rooms - 1; i++) {
         connect_room_centers(rooms[i].center, rooms[i + 1].center);
     }
+    DrawRectangle((rooms[4].center.x * 20), (rooms[4].center.y * 20), 20, 20, RED);
+    tiles[(int)rooms[4].center.y][(int)rooms[4].center.x].type = DOOR; 
 };
-
 
 
 void move_player(Vector2 direction) {
@@ -321,8 +323,8 @@ int main(){
         }
 
         if (IsKeyPressed(KEY_R)) {
-            create_random_room();
             create_tiles();
+            create_random_room();
         }
 
         /*-------------------------------------------------------*/
@@ -365,9 +367,10 @@ int main(){
                     
                     Rectangle player_rec = {player.position.x, player.position.y, player.size.x, player.size.y};
                     DrawRectangleRec(player_rec, WHITE);
+                    // DrawRectangle((rooms[5].center.x * 20), (rooms[5].center.y * 20), 20, 20, RED);
                     
-                    DrawText("GAMEPLAY SCREEN", 430, 20, 30, MAROON);
-                    DrawText("PRESS Q to ENDING SCREEN", 430, 220, 20, MAROON);
+                    // DrawText("GAMEPLAY SCREEN", 430, 20, 30, MAROON);
+                    // DrawText("PRESS Q to ENDING SCREEN", 430, 220, 20, MAROON);
 
                 } break;
                 case ENDING:
