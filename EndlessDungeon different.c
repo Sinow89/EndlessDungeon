@@ -15,12 +15,14 @@ int key_bindings[5];
 const int screen_height = MAP_HEIGHT*20;
 const int screen_width = MAP_WIDTH*20;
 int n_rooms = 1; // Actual number of rooms
+int key = 0;
 
 typedef enum tiles_type{
     FLOOR,
     WALL,
     GOAL,
     DOOR,
+    TREASURE,
 } tiles_type;
 
 typedef enum GameScreen{ 
@@ -109,6 +111,7 @@ void connect_room_centers(Vector2 centerOne, Vector2 centerTwo) {
 
         tiles[(int)temp.y][(int)temp.x].type = FLOOR;
         DrawRectangle(temp.x * 20, temp.y * 20, 20, 20, GREEN);
+
     }
 }
 bool room_overlaps(room_t* rooms, int rooms_counter, int y, int x, int height, int width) {
@@ -167,6 +170,10 @@ void move_player(Vector2 direction) {
         player.position = new_position;
     }
 
+    if (tiles[tile_y][tile_x].type == TREASURE) {
+        player.position = new_position;
+    }
+
     if (tiles[tile_y][tile_x].type == WALL) {
         return;
     }
@@ -180,6 +187,17 @@ bool player_can_open() {
     int tile_y = player.position.y / 20;
 
     if (tiles[tile_y][tile_x].type == GOAL) {
+        return true;
+    }
+    return false;
+}
+
+
+bool player_can_collect() {
+    int tile_x = player.position.x / 20;
+    int tile_y = player.position.y / 20;
+
+    if (tiles[tile_y][tile_x].type == TREASURE) {
         return true;
     }
     return false;
@@ -203,6 +221,9 @@ void draw_random_room(){
     }
     tiles[(int)rooms[1].center.y][(int)rooms[1].center.x].type = GOAL; 
     DrawRectangle((rooms[1].center.x * 20), (rooms[1].center.y * 20), 20, 20, RED);
+
+    tiles[(int)rooms[2].position.y][(int)rooms[2].position.x].type = TREASURE; 
+    DrawRectangle((rooms[2].position.x * 20), (rooms[2].position.y * 20), 20, 20, BLUE);
 };
 
 
@@ -301,6 +322,14 @@ int main(){
             create_tiles();
         }
 
+        if (IsKeyPressed(key_bindings[OPEN]) && player_can_collect) {
+            key++;
+        }
+
+        if (IsKeyPressed(KEY_V)) {
+            key++;
+         }
+
         if (IsKeyPressed(KEY_R)) {
             create_tiles();
             create_random_room();
@@ -341,6 +370,10 @@ int main(){
                     DrawRectangleRec(player_rec, WHITE);
                     // DrawText("GAMEPLAY SCREEN", 430, 20, 30, MAROON);
                     // DrawText("PRESS Q to ENDING SCREEN", 430, 220, 20, MAROON);
+
+                    char keyText[20];
+                    sprintf(keyText, "Keys: %d", key);
+                    DrawText(keyText, 20, 20, 30, WHITE);
 
                 } break;
                 case ENDING:
