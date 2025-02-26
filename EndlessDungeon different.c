@@ -16,6 +16,7 @@ const int screen_height = MAP_HEIGHT*20;
 const int screen_width = MAP_WIDTH*20;
 int n_rooms = 1; // Actual number of rooms
 int key = 0;
+int amount_key = 1;
 
 typedef enum tiles_type{
     FLOOR,
@@ -212,7 +213,7 @@ void draw_tiles(){
 };
 
 void draw_random_room(){
-    for (int i = 0; i < n_rooms; i++) {
+        for (int i = 0; i < n_rooms; i++) {
         add_room(rooms[i]);
     }
     
@@ -222,8 +223,10 @@ void draw_random_room(){
     tiles[(int)rooms[1].center.y][(int)rooms[1].center.x].type = GOAL; 
     DrawRectangle((rooms[1].center.x * 20), (rooms[1].center.y * 20), 20, 20, RED);
 
-    tiles[(int)rooms[2].position.y][(int)rooms[2].position.x].type = TREASURE; 
-    DrawRectangle((rooms[2].position.x * 20), (rooms[2].position.y * 20), 20, 20, BLUE);
+    if(amount_key > 0){
+        tiles[(int)rooms[2].position.y][(int)rooms[2].position.x].type = TREASURE; 
+        DrawRectangle((rooms[2].position.x * 20), (rooms[2].position.y * 20), 20, 20, BLUE);
+    }
 };
 
 
@@ -320,10 +323,13 @@ int main(){
         if (IsKeyPressed(key_bindings[OPEN]) && player_can_open()) {
             create_random_room();
             create_tiles();
+            amount_key++;
         }
 
-        if (IsKeyPressed(key_bindings[OPEN]) && player_can_collect) {
+        if (IsKeyPressed(key_bindings[OPEN]) && player_can_collect()) {
             key++;
+            amount_key = 0;
+            tiles[(int)rooms[2].position.y][(int)rooms[2].position.x].type = FLOOR; 
         }
 
         if (IsKeyPressed(KEY_V)) {
