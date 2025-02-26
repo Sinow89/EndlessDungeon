@@ -320,10 +320,11 @@ int main(){
             move_player((Vector2){20, 0});
         }
 
-        if (IsKeyPressed(key_bindings[OPEN]) && player_can_open()) {
+        if (IsKeyPressed(key_bindings[OPEN]) && player_can_open() && key > 0) {
             create_random_room();
             create_tiles();
             amount_key++;
+            key--;
         }
 
         if (IsKeyPressed(key_bindings[OPEN]) && player_can_collect()) {
