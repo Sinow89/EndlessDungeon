@@ -19,6 +19,7 @@ int n_rooms = 1; // Actual number of rooms
 typedef enum tiles_type{
     FLOOR,
     WALL,
+    GOAL,
     DOOR,
 } tiles_type;
 
@@ -162,11 +163,14 @@ void move_player(Vector2 direction) {
         player.position = new_position;
     }
 
-    if (tiles[tile_y][tile_x].type == DOOR) {
+    if (tiles[tile_y][tile_x].type == GOAL) {
         player.position = new_position;
     }
 
     if (tiles[tile_y][tile_x].type == WALL) {
+        return;
+    }
+    if (tiles[tile_y][tile_x].type == DOOR) {
         return;
     }
 }
@@ -175,14 +179,11 @@ bool player_can_open() {
     int tile_x = player.position.x / 20;
     int tile_y = player.position.y / 20;
 
-    if (tiles[tile_y][tile_x].type == DOOR) {
+    if (tiles[tile_y][tile_x].type == GOAL) {
         return true;
     }
     return false;
 }
-
-
-  
 
 void draw_tiles(){
     for (int y = 0; y < MAP_HEIGHT; y++){
@@ -200,7 +201,7 @@ void draw_random_room(){
     for (int i = 0; i < n_rooms - 1; i++) {
         connect_room_centers(rooms[i].center, rooms[i + 1].center);
     }
-    tiles[(int)rooms[1].center.y][(int)rooms[1].center.x].type = DOOR; 
+    tiles[(int)rooms[1].center.y][(int)rooms[1].center.x].type = GOAL; 
     DrawRectangle((rooms[1].center.x * 20), (rooms[1].center.y * 20), 20, 20, RED);
 };
 
