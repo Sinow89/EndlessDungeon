@@ -111,7 +111,7 @@ void connect_room_centers(Vector2 centerOne, Vector2 centerTwo) {
         }
 
         tiles[(int)temp.y][(int)temp.x].type = FLOOR;
-        DrawRectangle(temp.x * 20, temp.y * 20, 20, 20, GREEN);
+        DrawRectangle(temp.x * 20, temp.y * 20, 20, 20, GRAY);
 
     }
 }
