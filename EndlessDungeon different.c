@@ -107,12 +107,25 @@ void connect_room_centers(Vector2 centerOne, Vector2 centerTwo) {
         }
 
         tiles[(int)temp.y][(int)temp.x].type = FLOOR;
-        DrawRectangle(temp.x * 20, temp.y * 20, 20, 20, GRAY);
+        DrawRectangle(temp.x * 20, temp.y * 20, 20, 20, GREEN);
     }
 }
+bool room_overlaps(room_t* rooms, int rooms_counter, int y, int x, int height, int width) {
+    for (int i = 0; i < rooms_counter; i++) {
+      if (x >= rooms[i].position.x + rooms[i].width || rooms[i].position.x >= x + width) {
+        continue;
+      }
+      if (y + height <= rooms[i].position.y || rooms[i].position.y + rooms[i].height <= y){
+        continue;
+      }
+      return true;
+    }
+    return false;
+  }
 
 void create_random_room(){
     n_rooms = (rand() % 11) + 5; // 5 to 15 rooms
+    int rooms_counter = 0;
     for (int i = 0; i < n_rooms; i++) {
         int y = (rand() % (MAP_HEIGHT - 10)) + 1;
         int x = (rand() % (MAP_WIDTH - 20)) + 1;
@@ -121,6 +134,12 @@ void create_random_room(){
 
         rooms[i] = create_room(y, x, height, width);
         add_room(rooms[i]); // This sets tiles[y][x].type = FLOOR
+        if (!room_overlaps(rooms, rooms_counter, y, x, height, width))
+        {
+          rooms[rooms_counter] = create_room(y, x, height, width);
+          add_room(rooms[rooms_counter]);
+          rooms_counter++;
+        }
     }
 
     for (int i = 0; i < n_rooms - 1; i++) {
@@ -161,6 +180,9 @@ bool player_can_open() {
     }
     return false;
 }
+
+
+  
 
 void draw_tiles(){
     for (int y = 0; y < MAP_HEIGHT; y++){
