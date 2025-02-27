@@ -341,6 +341,7 @@ int main(){
             create_random_room();
             create_tiles();
             amount_key++;
+            key--;
         }
 
         if (IsKeyPressed(key_bindings[OPEN]) && player_can_collect()) {
@@ -402,8 +403,8 @@ int main(){
                                     texture_index_y = 4;
                                     break;
                                 case WALL:
-                                    texture_index_x = 3; // Example: Adjust this based on tile_0069 position
-                                    texture_index_y = 2;
+                                    texture_index_x = 1; // Example: Adjust this based on tile_0069 position
+                                    texture_index_y = 1;
                                     break;
                                 case GOAL:
                                     texture_index_x = 4;
@@ -443,10 +444,25 @@ int main(){
                     }
 
 
-                    Rectangle player_rec = {player.position.x, player.position.y, player.size.x, player.size.y};
-                    DrawRectangleRec(player_rec, WHITE);
-                    // DrawText("GAMEPLAY SCREEN", 430, 20, 30, MAROON);
-                    // DrawText("PRESS Q to ENDING SCREEN", 430, 220, 20, MAROON);
+                    int player_texture_index_x = 4; // Choose an appropriate player tile index
+                    int player_texture_index_y = 0; // Choose an appropriate player tile index
+                    
+                    Rectangle player_source = {
+                        (float)player_texture_index_x * TILE_WIDTH,
+                        (float)player_texture_index_y * TILE_HEIGHT,
+                        (float)TILE_WIDTH,
+                        (float)TILE_HEIGHT
+                    };
+                    
+                    Rectangle player_dest = {
+                        player.position.x,
+                        player.position.y,
+                        21,
+                        20
+                    };
+                    
+                    Vector2 player_origin = {0, 0};
+                    DrawTexturePro(textures[TEXTURE_TILE_MAP], player_source, player_dest, player_origin, 0.0f, WHITE);
 
                     char keyText[20];
                     sprintf(keyText, "Keys: %d", key);
