@@ -285,7 +285,7 @@ int main(){
             {
                 // TODO: Update TITLE screen variables here!
                 // Press enter to change to GAMEPLAY screen
-                if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
+                if (IsKeyPressed(KEY_SPACE))
                 {
                     current_screen = GAMEPLAY;
                 }
@@ -378,7 +378,7 @@ int main(){
                     DrawText("You walk with WASD", 400, 250, 20, GRAY);
                     DrawText("To pick up things you press E", 400, 300, 20, GRAY);
                     DrawText("In order the progress you have to pick up the key before", 400, 350, 20, GRAY);
-                    DrawText("Press Enter to start the game", 600, 600, 20, WHITE);
+                    DrawText("Press Space to start the game", 600, 600, 20, WHITE);
 
                 } break;
                 case GAMEPLAY:
