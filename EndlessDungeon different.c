@@ -10,6 +10,9 @@
 
 #define MAP_HEIGHT 45 // 900/20 = 45, files the whole screen
 #define MAP_WIDTH 90 // 1800/20 = 90
+#define TILE_HEIGHT 8
+#define TILE_WIDTH 8
+#define MAX_TEXTURES 1
 
 int key_bindings[5];
 const int screen_height = MAP_HEIGHT*20;
@@ -25,6 +28,12 @@ typedef enum tiles_type{
     DOOR,
     TREASURE,
 } tiles_type;
+
+typedef enum{
+    TEXTURE_TILE_MAP = 0,
+} texture_asset;
+
+Texture2D textures[MAX_TEXTURES];
 
 typedef enum GameScreen{ 
     LOGO,
@@ -230,12 +239,17 @@ void draw_random_room(){
 };
 
 
+
+
 /*-------------------------------------------------------*/
 /*----------------------MAIN-----------------------------*/
 /*-------------------------------------------------------*/
 
 
 int main(){
+
+
+    // UnloadImage(image);
 
     create_tiles();
     srand(time(NULL));
@@ -253,6 +267,9 @@ int main(){
     SetTargetFPS(60);
     InitWindow(screen_width, screen_height, "Endless Dungeon");
     create_random_room();
+
+    Image image = LoadImage("colored_tilemap_packed.png");
+    textures[TEXTURE_TILE_MAP] = LoadTextureFromImage(image);
     
     while(!WindowShouldClose()){
 
@@ -324,7 +341,6 @@ int main(){
             create_random_room();
             create_tiles();
             amount_key++;
-            key--;
         }
 
         if (IsKeyPressed(key_bindings[OPEN]) && player_can_collect()) {
@@ -370,8 +386,62 @@ int main(){
                 case GAMEPLAY:
                 {
                     player_can_open();
-                    draw_tiles();
+                    // draw_tiles();
                     draw_random_room();
+                    
+                    int texture_index_x = 0;
+                    int texture_index_y = 0;
+
+                    for (int y = 0; y < MAP_HEIGHT; y++) {
+                        for (int x = 0; x < MAP_WIDTH; x++) {
+                
+                            // Set tile texture based on tile type
+                            switch (tiles[y][x].type) {
+                                case FLOOR:
+                                    texture_index_x = 4; // Example: Adjust this based on tile_0068 position
+                                    texture_index_y = 4;
+                                    break;
+                                case WALL:
+                                    texture_index_x = 3; // Example: Adjust this based on tile_0069 position
+                                    texture_index_y = 2;
+                                    break;
+                                case GOAL:
+                                    texture_index_x = 4;
+                                    texture_index_y = 2;
+                                    break;
+                                case DOOR:
+                                    texture_index_x = 2;
+                                    texture_index_y = 4;
+                                    break;
+                                case TREASURE:
+                                    texture_index_x = 10;
+                                    texture_index_y = 5;
+                                    break;
+                                default:
+                                    texture_index_x = 4;
+                                    texture_index_y = 3;
+                                    break;
+                            }
+                
+                            Rectangle source = {
+                                (float)texture_index_x * TILE_HEIGHT,
+                                (float)texture_index_y * TILE_WIDTH,
+                                (float)TILE_WIDTH,
+                                (float)TILE_HEIGHT
+                            };
+                
+                            Rectangle dest = {
+                                (float)(tiles[y][x].position.x),
+                                (float)(tiles[y][x].position.y),
+                                20,
+                                20
+                            };
+                
+                            Vector2 origin = {0, 0};
+                            DrawTexturePro(textures[TEXTURE_TILE_MAP], source, dest, origin, 0.0f, WHITE);
+                        }
+                    }
+
 
                     Rectangle player_rec = {player.position.x, player.position.y, player.size.x, player.size.y};
                     DrawRectangleRec(player_rec, WHITE);
@@ -396,6 +466,9 @@ int main(){
 
         EndDrawing();
 
+    }
+    for(int i = 0; i < MAX_TEXTURES; i++){
+        UnloadTexture(textures[i]);
     }
     CloseWindow();
 }
