@@ -238,13 +238,9 @@ void draw_random_room(){
     }
 };
 
-
-
-
 /*-------------------------------------------------------*/
 /*----------------------MAIN-----------------------------*/
 /*-------------------------------------------------------*/
-
 
 int main(){
 
@@ -260,7 +256,7 @@ int main(){
     key_bindings[RIGHT] = KEY_D;
     key_bindings[OPEN] = KEY_E;
 
-    GameScreen current_screen = GAMEPLAY;
+    GameScreen current_screen = LOGO;
 
     int frames_counter = 0; 
 
@@ -280,7 +276,7 @@ int main(){
                 // TODO: Update LOGO screen variables here!
                 frames_counter++;    // Count frames
                 // Wait for 2 seconds (120 frames) before jumping to TITLE screen
-                if (frames_counter > 10)
+                if (frames_counter > 240)
                 {
                     current_screen = TITLE;
                 }
@@ -350,13 +346,10 @@ int main(){
             tiles[(int)rooms[2].position.y][(int)rooms[2].position.x].type = FLOOR; 
         }
 
-        if (IsKeyPressed(KEY_V)) {
-            key++;
-         }
-
         if (IsKeyPressed(KEY_R)) {
             create_tiles();
             create_random_room();
+            amount_key = 0;
         }
 
         /*-------------------------------------------------------*/
@@ -372,16 +365,20 @@ int main(){
                 case LOGO:
                 {
                     // TODO: Draw LOGO screen here!
-                    DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
-                    DrawText("WAIT for 2 SECONDS...", 290, 220, 20, GRAY);
+                    DrawRectangle(0, 0, screen_width, screen_height, BLACK);
+                    DrawText("The Endless Dungeon", 400, 200, 100, WHITE);
+                    DrawText("by Christoffer Rozenbachs", 800, 350, 20, GRAY);
 
                 } break;
                 case TITLE:
                 {
                     // TODO: Draw TITLE screen here!
-                    DrawRectangle(0, 0, screen_width, screen_height, GREEN);
-                    DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
-                    DrawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DARKGREEN);
+                    DrawRectangle(0, 0, screen_width, screen_height, BLACK);
+                    DrawText("How to play the game", 400, 150, 50, WHITE);
+                    DrawText("You walk with WASD", 400, 250, 20, GRAY);
+                    DrawText("To pick up things you press E", 400, 300, 20, GRAY);
+                    DrawText("In order the progress you have to pick up the key before", 400, 350, 20, GRAY);
+                    DrawText("Press Enter to start the game", 600, 600, 20, WHITE);
 
                 } break;
                 case GAMEPLAY:
@@ -466,7 +463,7 @@ int main(){
 
                     char keyText[20];
                     sprintf(keyText, "Keys: %d", key);
-                    DrawText(keyText, 20, 20, 30, WHITE);
+                    DrawText(keyText, 20, 20, 20, WHITE);
 
                 } break;
                 case ENDING:
