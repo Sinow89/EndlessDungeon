@@ -413,7 +413,6 @@ int main(){
                         }
                     }
 
-
                     int player_texture_index_x = 4;
                     int player_texture_index_y = 0;
                     
