@@ -101,8 +101,7 @@ room_t create_room(int y, int x, int height, int width){
 void add_room(room_t room) {
     for (int y = room.position.y; y < room.position.y + room.height; y++) {
         for (int x = room.position.x; x < room.position.x + room.width; x++) {
-            DrawRectangle(tiles[y][x].position.x, tiles[y][x].position.y, 20, 20, GRAY);
-            tiles[y][x].type = FLOOR;
+                        tiles[y][x].type = FLOOR;
         }
     }
 }
@@ -120,7 +119,6 @@ void connect_room_centers(Vector2 centerOne, Vector2 centerTwo) {
         }
 
         tiles[(int)temp.y][(int)temp.x].type = FLOOR;
-        DrawRectangle(temp.x * 20, temp.y * 20, 20, 20, GRAY);
 
     }
 }
@@ -147,7 +145,7 @@ void create_random_room(){
         int width = (rand() % 15) + 5;
 
         rooms[i] = create_room(y, x, height, width);
-        add_room(rooms[i]); // This sets tiles[y][x].type = FLOOR
+        add_room(rooms[i]);
         if (!room_overlaps(rooms, rooms_counter, y, x, height, width))
         {
           rooms[rooms_counter] = create_room(y, x, height, width);
@@ -202,7 +200,6 @@ bool player_can_open() {
     return false;
 }
 
-
 bool player_can_collect() {
     int tile_x = player.position.x / 20;
     int tile_y = player.position.y / 20;
@@ -212,14 +209,6 @@ bool player_can_collect() {
     }
     return false;
 }
-
-void draw_tiles(){
-    for (int y = 0; y < MAP_HEIGHT; y++){
-        for (int x = 0; x < MAP_WIDTH; x++){
-            DrawRectangle(tiles[y][x].position.x, tiles[y][x].position.y, 20, 20, BLACK);
-        }
-    }
-};
 
 void draw_random_room(){
         for (int i = 0; i < n_rooms; i++) {
@@ -243,9 +232,6 @@ void draw_random_room(){
 /*-------------------------------------------------------*/
 
 int main(){
-
-
-    // UnloadImage(image);
 
     create_tiles();
     srand(time(NULL));
@@ -273,7 +259,6 @@ int main(){
         {
             case LOGO:
             {
-                // TODO: Update LOGO screen variables here!
                 frames_counter++;    // Count frames
                 // Wait for 2 seconds (120 frames) before jumping to TITLE screen
                 if (frames_counter > 240)
@@ -283,8 +268,6 @@ int main(){
             } break;
             case TITLE:
             {
-                // TODO: Update TITLE screen variables here!
-                // Press enter to change to GAMEPLAY screen
                 if (IsKeyPressed(KEY_SPACE))
                 {
                     current_screen = GAMEPLAY;
@@ -292,9 +275,6 @@ int main(){
             } break;
             case GAMEPLAY:
             {
-                // TODO: Update GAMEPLAY screen variables here!
-
-                // Press enter to change to ENDING screen
                 if (IsKeyPressed(KEY_Q))
                 {
                     current_screen = ENDING;
@@ -302,9 +282,7 @@ int main(){
             } break;
             case ENDING:
             {
-                // TODO: Update ENDING screen variables here!
-                // Press enter to return to TITLE screen
-                if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
+                if (IsKeyPressed(KEY_ENTER))
                 {
                     current_screen = TITLE;
                 }
@@ -315,7 +293,6 @@ int main(){
         /*-------------------------------------------------------*/
         /*----------------------Controls-------------------------*/
         /*-------------------------------------------------------*/
-
 
         if (IsKeyPressed(key_bindings[UP]) || IsKeyPressedRepeat(key_bindings[UP])){
             move_player((Vector2){0, -20});
@@ -364,7 +341,6 @@ int main(){
             {
                 case LOGO:
                 {
-                    // TODO: Draw LOGO screen here!
                     DrawRectangle(0, 0, screen_width, screen_height, BLACK);
                     DrawText("The Endless Dungeon", 400, 200, 100, WHITE);
                     DrawText("by Christoffer Rozenbachs", 800, 350, 20, GRAY);
@@ -372,7 +348,6 @@ int main(){
                 } break;
                 case TITLE:
                 {
-                    // TODO: Draw TITLE screen here!
                     DrawRectangle(0, 0, screen_width, screen_height, BLACK);
                     DrawText("How to play the game", 400, 150, 50, WHITE);
                     DrawText("You walk with WASD", 400, 250, 20, GRAY);
@@ -384,7 +359,6 @@ int main(){
                 case GAMEPLAY:
                 {
                     player_can_open();
-                    // draw_tiles();
                     draw_random_room();
                     
                     int texture_index_x = 0;
@@ -393,14 +367,13 @@ int main(){
                     for (int y = 0; y < MAP_HEIGHT; y++) {
                         for (int x = 0; x < MAP_WIDTH; x++) {
                 
-                            // Set tile texture based on tile type
                             switch (tiles[y][x].type) {
                                 case FLOOR:
-                                    texture_index_x = 4; // Example: Adjust this based on tile_0068 position
+                                    texture_index_x = 4;
                                     texture_index_y = 4;
                                     break;
                                 case WALL:
-                                    texture_index_x = 1; // Example: Adjust this based on tile_0069 position
+                                    texture_index_x = 1;
                                     texture_index_y = 1;
                                     break;
                                 case GOAL:
@@ -441,8 +414,8 @@ int main(){
                     }
 
 
-                    int player_texture_index_x = 4; // Choose an appropriate player tile index
-                    int player_texture_index_y = 0; // Choose an appropriate player tile index
+                    int player_texture_index_x = 4;
+                    int player_texture_index_y = 0;
                     
                     Rectangle player_source = {
                         (float)player_texture_index_x * TILE_WIDTH,
@@ -468,11 +441,9 @@ int main(){
                 } break;
                 case ENDING:
                 {
-                    // TODO: Draw ENDING screen here!
-                    DrawRectangle(0, 0, screen_width, screen_height, BLUE);
+                    DrawRectangle(0, 0, screen_width, screen_height, BLACK);
                     DrawText("ENDING SCREEN", 20, 20, 40, DARKBLUE);
                     DrawText("PRESS ENTER or TAP to RETURN to TITLE SCREEN", 120, 220, 20, DARKBLUE);
-
                 } break;
                 default: break;
             }
